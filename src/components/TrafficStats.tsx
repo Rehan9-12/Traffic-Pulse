@@ -8,82 +8,82 @@ interface TrafficStatsProps {
 }
 
 const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
-  // Mock data for traffic statistics
+  // Mock data for traffic statistics for Indian cities
   const stats = {
-    'new-york': {
-      congestionLevel: 78,
-      avgSpeed: 18,
-      incidentCount: 42,
+    'delhi': {
+      congestionLevel: 85,
+      avgSpeed: 15,
+      incidentCount: 58,
+      congestionChange: 7,
+      speedChange: -3,
+    },
+    'mumbai': {
+      congestionLevel: 90,
+      avgSpeed: 12,
+      incidentCount: 64,
       congestionChange: 5,
       speedChange: -2,
     },
-    'los-angeles': {
-      congestionLevel: 85,
-      avgSpeed: 15,
-      incidentCount: 56,
+    'bengaluru': {
+      congestionLevel: 82,
+      avgSpeed: 14,
+      incidentCount: 47,
       congestionChange: 8,
-      speedChange: -3,
+      speedChange: -4,
     },
-    'chicago': {
-      congestionLevel: 65,
+    'chennai': {
+      congestionLevel: 75,
+      avgSpeed: 18,
+      incidentCount: 39,
+      congestionChange: 3,
+      speedChange: -1,
+    },
+    'kolkata': {
+      congestionLevel: 80,
+      avgSpeed: 16,
+      incidentCount: 45,
+      congestionChange: 4,
+      speedChange: -2,
+    },
+    'hyderabad': {
+      congestionLevel: 72,
+      avgSpeed: 20,
+      incidentCount: 36,
+      congestionChange: -2,
+      speedChange: 1,
+    },
+    'pune': {
+      congestionLevel: 68,
       avgSpeed: 22,
       incidentCount: 31,
       congestionChange: -3,
       speedChange: 2,
     },
-    'houston': {
-      congestionLevel: 60,
-      avgSpeed: 25,
-      incidentCount: 27,
-      congestionChange: -2,
-      speedChange: 1,
-    },
-    'phoenix': {
-      congestionLevel: 55,
-      avgSpeed: 28,
-      incidentCount: 19,
+    'ahmedabad': {
+      congestionLevel: 65,
+      avgSpeed: 24,
+      incidentCount: 28,
       congestionChange: -5,
       speedChange: 3,
     },
-    'philadelphia': {
-      congestionLevel: 70,
-      avgSpeed: 20,
-      incidentCount: 33,
-      congestionChange: 2,
-      speedChange: -1,
+    'lucknow': {
+      congestionLevel: 60,
+      avgSpeed: 25,
+      incidentCount: 24,
+      congestionChange: -2,
+      speedChange: 1,
     },
-    'san-antonio': {
-      congestionLevel: 50,
-      avgSpeed: 30,
-      incidentCount: 15,
-      congestionChange: -8,
-      speedChange: 4,
-    },
-    'san-diego': {
+    'jaipur': {
       congestionLevel: 62,
-      avgSpeed: 24,
-      incidentCount: 22,
-      congestionChange: 0,
-      speedChange: 0,
-    },
-    'dallas': {
-      congestionLevel: 58,
-      avgSpeed: 26,
-      incidentCount: 25,
-      congestionChange: -4,
-      speedChange: 2,
-    },
-    'san-francisco': {
-      congestionLevel: 80,
-      avgSpeed: 16,
-      incidentCount: 38,
-      congestionChange: 6,
-      speedChange: -2,
+      avgSpeed: 23,
+      incidentCount: 26,
+      congestionChange: -1,
+      speedChange: 1,
     },
   };
 
-  // Default to New York if city not found
-  const cityStats = stats[city as keyof typeof stats] || stats['new-york'];
+  // Default to Delhi if city not found
+  const cityStats = stats[city as keyof typeof stats] || stats['delhi'];
 
   // Get congestion level color
   const getCongestionColor = (level: number) => {
@@ -127,14 +127,14 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
         </CardHeader>
         <CardContent>
           <div className="flex items-baseline justify-between">
-            <div className="text-2xl font-bold">{cityStats.avgSpeed} mph</div>
+            <div className="text-2xl font-bold">{cityStats.avgSpeed} km/h</div>
             <div className={`flex items-center text-xs ${cityStats.speedChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
               {cityStats.speedChange > 0 ? (
                 <ArrowUpIcon className="h-3 w-3 mr-1" />
               ) : (
                 <ArrowDownIcon className="h-3 w-3 mr-1" />
               )}
-              {Math.abs(cityStats.speedChange)} mph
+              {Math.abs(cityStats.speedChange)} km/h
             </div>
           </div>
           <Progress 

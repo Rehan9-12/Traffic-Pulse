@@ -12,18 +12,18 @@ interface CitySelectorProps {
 }
 
 const CitySelector: React.FC<CitySelectorProps> = ({ selectedCity, onCityChange }) => {
-  // Predefined list of major cities with their coordinates
+  // Predefined list of major Indian cities with their coordinates
   const cities: Record<string, City> = {
-    'new-york': { name: 'New York', coordinates: [-74.0060, 40.7128] },
-    'los-angeles': { name: 'Los Angeles', coordinates: [-118.2437, 34.0522] },
-    'chicago': { name: 'Chicago', coordinates: [-87.6298, 41.8781] },
-    'houston': { name: 'Houston', coordinates: [-95.3698, 29.7604] },
-    'phoenix': { name: 'Phoenix', coordinates: [-112.0740, 33.4484] },
-    'philadelphia': { name: 'Philadelphia', coordinates: [-75.1652, 39.9526] },
-    'san-antonio': { name: 'San Antonio', coordinates: [-98.4936, 29.4241] },
-    'san-diego': { name: 'San Diego', coordinates: [-117.1611, 32.7157] },
-    'dallas': { name: 'Dallas', coordinates: [-96.7970, 32.7767] },
-    'san-francisco': { name: 'San Francisco', coordinates: [-122.4194, 37.7749] },
+    'delhi': { name: 'Delhi', coordinates: [77.1025, 28.7041] },
+    'mumbai': { name: 'Mumbai', coordinates: [72.8777, 19.0760] },
+    'bengaluru': { name: 'Bengaluru', coordinates: [77.5946, 12.9716] },
+    'chennai': { name: 'Chennai', coordinates: [80.2707, 13.0827] },
+    'kolkata': { name: 'Kolkata', coordinates: [88.3639, 22.5726] },
+    'hyderabad': { name: 'Hyderabad', coordinates: [78.4867, 17.3850] },
+    'pune': { name: 'Pune', coordinates: [73.8567, 18.5204] },
+    'ahmedabad': { name: 'Ahmedabad', coordinates: [72.5714, 23.0225] },
+    'lucknow': { name: 'Lucknow', coordinates: [80.9462, 26.8467] },
+    'jaipur': { name: 'Jaipur', coordinates: [75.7873, 26.9124] },
   };
 
   const handleCityChange = (value: string) => {

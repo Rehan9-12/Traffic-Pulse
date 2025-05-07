@@ -4,55 +4,71 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AlertTriangle, Construction, Car, CloudRain, AlertCircle } from 'lucide-react';
 
-// Mock data for traffic incidents
+// Mock data for traffic incidents in Indian cities
 const mockIncidents = [
   {
     id: '1',
     type: 'accident',
     description: 'Multi-vehicle collision',
-    location: 'I-95 Northbound, Exit 7',
+    location: 'NH-48, Gurugram Expressway',
     severity: 'high',
     time: '10:30 AM',
   },
   {
     id: '2',
     type: 'construction',
-    description: 'Road work - lane closure',
-    location: 'Main St & 5th Ave',
+    description: 'Metro construction - lane closure',
+    location: 'MG Road, Bengaluru',
     severity: 'medium',
     time: '09:15 AM',
   },
   {
     id: '3',
     type: 'congestion',
-    description: 'Heavy traffic',
-    location: 'Downtown area',
-    severity: 'medium',
+    description: 'Heavy traffic jam',
+    location: 'Silk Board Junction, Bengaluru',
+    severity: 'high',
     time: '08:45 AM',
   },
   {
     id: '4',
     type: 'weather',
-    description: 'Flooding on roadway',
-    location: 'River Rd near Park',
+    description: 'Waterlogging due to rain',
+    location: 'Andheri Subway, Mumbai',
     severity: 'high',
     time: '11:20 AM',
   },
   {
     id: '5',
     type: 'event',
-    description: 'Sports event causing delays',
-    location: 'Stadium area',
-    severity: 'low',
+    description: 'Cricket match causing delays',
+    location: 'Near Wankhede Stadium, Mumbai',
+    severity: 'medium',
     time: '07:30 PM',
   },
   {
     id: '6',
     type: 'accident',
-    description: 'Vehicle overturned',
-    location: 'Highway 101 Southbound',
+    description: 'Truck overturned',
+    location: 'Outer Ring Road, Hyderabad',
     severity: 'high',
     time: '02:15 PM',
+  },
+  {
+    id: '7',
+    type: 'congestion',
+    description: 'Rush hour traffic',
+    location: 'DND Flyway, Delhi-Noida',
+    severity: 'medium',
+    time: '06:30 PM',
+  },
+  {
+    id: '8',
+    type: 'construction',
+    description: 'Flyover repair work',
+    location: 'Anna Salai, Chennai',
+    severity: 'medium',
+    time: '11:45 AM',
   },
 ];
 

@@ -14,8 +14,8 @@ import TrafficStats from "@/components/TrafficStats";
 
 export default function Dashboard() {
   const { signOut, user } = useAuth();
-  const [selectedCity, setSelectedCity] = useState("new-york");
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-74.0060, 40.7128]); // Default to NYC
+  const [selectedCity, setSelectedCity] = useState("delhi");
+  const [mapCenter, setMapCenter] = useState<[number, number]>([77.1025, 28.7041]); // Default to Delhi
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
