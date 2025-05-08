@@ -26,7 +26,7 @@ const LoginPage = () => {
     try {
       const { email, password } = formik.values;
       await signIn(email, password);
-      router.push('/dashboard');
+      router.push('/');
     } catch (error) {
       console.error(error);
       toast({
