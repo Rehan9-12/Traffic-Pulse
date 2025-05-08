@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
+// Import CSS directly in the component to ensure it's loaded
 import '@tomtom-international/web-sdk-maps/dist/maps.css';
+import Script from 'next/script';
+
+// Add TomTom SDK type definition
+declare global {
+  interface Window {
+    tt: any;
+  }
+}
 import TrafficLegend from './TrafficLegend';
 import { Button } from '@/components/ui/button';
 import { Info } from 'lucide-react';
@@ -24,84 +33,65 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [showLegend, setShowLegend] = useState(true);
 
-  useEffect(() => {
-    // Dynamic import of TomTom SDK to avoid SSR issues
-    const loadMap = async () => {
-      try {
-        // Import both maps and services for traffic layers
-        const ttMaps = await import('@tomtom-international/web-sdk-maps');
-        const ttServices = await import('@tomtom-international/web-sdk-services');
-        
-        if (mapRef.current && !mapInstance) {
-          const map = ttMaps.map({
-            key: apiKey,
-            container: mapRef.current,
-            center: center,
-            zoom: zoom,
-            stylesVisibility: {
-              trafficFlow: true,
-              trafficIncidents: true
-            }
-          });
-          
-          // Add traffic flow visualization when map is loaded
-          map.on('load', () => {
-            try {
-              // Add traffic flow layer with enhanced visibility
-              if (ttMaps.services && ttMaps.services.traffic) {
-                // Add traffic flow layer (colored roads based on traffic conditions)
-                const trafficFlow = new ttMaps.services.traffic.TrafficFlow({
-                  key: apiKey,
-                  style: 'relative', // 'relative' shows traffic relative to free-flow conditions
-                  refresh: 60, // refresh every 60 seconds
-                });
-                map.addLayer(trafficFlow);
-                
-                // Add traffic incidents layer (accident markers, etc.)
-                const trafficIncidents = new ttMaps.services.traffic.TrafficIncidents({
-                  key: apiKey,
-                  refresh: 60,
-                });
-                map.addLayer(trafficIncidents);
-              }
-              // Fallback for different API versions
-              else if (ttServices && ttServices.traffic) {
-                // Add traffic flow layer
-                const trafficFlowLayer = new ttServices.traffic.TrafficFlowLayer({
-                  key: apiKey,
-                  refresh: 60,
-                });
-                map.addLayer(trafficFlowLayer);
-                
-                // Add traffic incidents layer
-                const trafficIncidentsLayer = new ttServices.traffic.TrafficIncidentsLayer({
-                  key: apiKey,
-                  refresh: 60,
-                });
-                map.addLayer(trafficIncidentsLayer);
-              }
-              
-              // Add custom controls for toggling traffic layers
-              map.addControl(new ttMaps.TrafficControl());
-              map.addControl(new ttMaps.FullscreenControl());
-              
-            } catch (e) {
-              console.warn("Could not add traffic layers:", e);
-              // Fallback to basic map without traffic layers
-            }
-            
-            setIsLoaded(true);
-          });
-          
-          setMapInstance(map);
+  // Function to initialize the map
+  const initializeMap = () => {
+    if (!window.tt || !mapRef.current || mapInstance) return;
+    
+    try {
+      const map = window.tt.map({
+        key: apiKey,
+        container: mapRef.current,
+        center: center,
+        zoom: zoom,
+        stylesVisibility: {
+          trafficFlow: true,
+          trafficIncidents: true
         }
-      } catch (error) {
-        console.error('Error loading TomTom map:', error);
-      }
-    };
+      });
+      
+      // Add traffic flow visualization when map is loaded
+      map.on('load', () => {
+        try {
+          // Add traffic flow layer (colored roads based on traffic conditions)
+          const trafficFlow = new window.tt.services.traffic.TrafficFlow({
+            key: apiKey,
+            style: 'relative', // 'relative' shows traffic relative to free-flow conditions
+            refresh: 60, // refresh every 60 seconds
+          });
+          map.addLayer(trafficFlow);
+          
+          // Add traffic incidents layer (accident markers, etc.)
+          const trafficIncidents = new window.tt.services.traffic.TrafficIncidents({
+            key: apiKey,
+            refresh: 60,
+          });
+          map.addLayer(trafficIncidents);
+          
+          // Add custom controls for toggling traffic layers
+          map.addControl(new window.tt.TrafficControl());
+          map.addControl(new window.tt.FullscreenControl());
+          
+        } catch (e) {
+          console.warn("Could not add traffic layers:", e);
+          // Fallback to basic map without traffic layers
+        }
+        
+        setIsLoaded(true);
+      });
+      
+      setMapInstance(map);
+    } catch (error) {
+      console.error('Error initializing TomTom map:', error);
+    }
+  };
 
-    loadMap();
-
+  // Load the map when the SDK is ready
+  useEffect(() => {
+    // Check if TomTom SDK is loaded
+    if (window.tt) {
+      initializeMap();
+    }
+    
     // Cleanup function
     return () => {
       if (mapInstance) {
@@ -109,7 +99,7 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
         setMapInstance(null);
       }
     };
-  }, [apiKey, center, zoom]);
+  }, [apiKey]);
 
   // Update map center if props change
   useEffect(() => {
@@ -121,6 +111,17 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
 
   return (
     <div className="relative">
+      {/* Load TomTom SDK */}
+      <Script 
+        src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"
+        onLoad={initializeMap}
+        strategy="afterInteractive"
+      />
+      <Script 
+        src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/services/services-web.min.js"
+        strategy="afterInteractive"
+      />
+      
       <div 
         ref={mapRef} 
         style={style} 

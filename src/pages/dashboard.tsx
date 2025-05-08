@@ -21,8 +21,8 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // TomTom API key - in a real app, this would be an environment variable
-  const tomtomApiKey = "YOUR_TOMTOM_API_KEY"; // Placeholder - will be replaced with env var
+  // TomTom API key from environment variables
+  const tomtomApiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY || "";
 
   // Handle city change
   const handleCityChange = (city: string, coordinates: [number, number]) => {
@@ -87,6 +87,27 @@ export default function Dashboard() {
 
             <Separator />
 
+            <div>
+              <h2 className="text-sm font-medium mb-2">Traffic Conditions</h2>
+              <TrafficConditionsSummary 
+                city={selectedCity} 
+                congestionLevel={
+                  selectedCity === 'delhi' ? 85 :
+                  selectedCity === 'mumbai' ? 90 :
+                  selectedCity === 'bengaluru' ? 82 :
+                  selectedCity === 'chennai' ? 75 :
+                  selectedCity === 'kolkata' ? 80 :
+                  selectedCity === 'hyderabad' ? 72 :
+                  selectedCity === 'pune' ? 68 :
+                  selectedCity === 'ahmedabad' ? 65 :
+                  selectedCity === 'lucknow' ? 60 :
+                  selectedCity === 'jaipur' ? 62 : 75
+                }
+              />
+            </div>
+
+            <Separator />
+
             <div className="mt-auto pt-6">
               <Button 
                 variant="outline" 
@@ -140,6 +161,26 @@ export default function Dashboard() {
               />
             </div>
 
+            {/* Mobile traffic conditions */}
+            <div className="block md:hidden mb-4">
+              <h2 className="text-sm font-medium mb-2">Traffic Conditions</h2>
+              <TrafficConditionsSummary 
+                city={selectedCity} 
+                congestionLevel={
+                  selectedCity === 'delhi' ? 85 :
+                  selectedCity === 'mumbai' ? 90 :
+                  selectedCity === 'bengaluru' ? 82 :
+                  selectedCity === 'chennai' ? 75 :
+                  selectedCity === 'kolkata' ? 80 :
+                  selectedCity === 'hyderabad' ? 72 :
+                  selectedCity === 'pune' ? 68 :
+                  selectedCity === 'ahmedabad' ? 65 :
+                  selectedCity === 'lucknow' ? 60 :
+                  selectedCity === 'jaipur' ? 62 : 75
+                }
+              />
+            </div>
+
             {/* Stats cards */}
             <TrafficStats city={selectedCity} />
 
@@ -150,22 +191,6 @@ export default function Dashboard() {
                   <CardTitle>Traffic Map</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
-                  {/* Traffic conditions summary */}
-                  <TrafficConditionsSummary 
-                    city={selectedCity} 
-                    congestionLevel={
-                      selectedCity === 'delhi' ? 85 :
-                      selectedCity === 'mumbai' ? 90 :
-                      selectedCity === 'bengaluru' ? 82 :
-                      selectedCity === 'chennai' ? 75 :
-                      selectedCity === 'kolkata' ? 80 :
-                      selectedCity === 'hyderabad' ? 72 :
-                      selectedCity === 'pune' ? 68 :
-                      selectedCity === 'ahmedabad' ? 65 :
-                      selectedCity === 'lucknow' ? 60 :
-                      selectedCity === 'jaipur' ? 62 : 75
-                    }
-                  />
                   <div className="h-[500px] w-full">
                     <TrafficMap 
                       apiKey={process.env.NEXT_PUBLIC_TOMTOM_API_KEY || tomtomApiKey}
