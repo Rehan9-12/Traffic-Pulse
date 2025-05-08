@@ -4,8 +4,10 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
+  const { user, initializing } = useAuth();
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -112,20 +114,40 @@ export default function Home() {
                 variants={fadeIn}
                 className="flex flex-col sm:flex-row items-center justify-center gap-4"
               >
-                <Link href="/dashboard">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300">
-                      Launch Dashboard
-                    </Button>
-                  </motion.div>
-                </Link>
-                <Link href="/signup">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                    <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-300">
-                      Sign Up
-                    </Button>
-                  </motion.div>
-                </Link>
+                {!initializing && (
+                  <>
+                    {/* Only show Dashboard button if user is logged in */}
+                    {user && (
+                      <Link href="/dashboard">
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300">
+                            Launch Dashboard
+                          </Button>
+                        </motion.div>
+                      </Link>
+                    )}
+                    
+                    {/* Only show Sign Up button if user is not logged in */}
+                    {!user && (
+                      <>
+                        <Link href="/login">
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300">
+                              Login
+                            </Button>
+                          </motion.div>
+                        </Link>
+                        <Link href="/signup">
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-300">
+                              Sign Up
+                            </Button>
+                          </motion.div>
+                        </Link>
+                      </>
+                    )}
+                  </>
+                )}
               </motion.div>
             </motion.div>
             
@@ -296,18 +318,20 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   viewport={{ once: true }}
                 >
-                  <Link href="/dashboard">
-                    <motion.div 
-                      className="inline-block"
-                      whileHover={{ scale: 1.05 }} 
-                      whileTap={{ scale: 0.98 }}
-                      {...pulseAnimation}
-                    >
-                      <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300">
-                        Get Started Now
-                      </Button>
-                    </motion.div>
-                  </Link>
+                  {!initializing && (
+                    <Link href={user ? "/dashboard" : "/signup"}>
+                      <motion.div 
+                        className="inline-block"
+                        whileHover={{ scale: 1.05 }} 
+                        whileTap={{ scale: 0.98 }}
+                        {...pulseAnimation}
+                      >
+                        <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300">
+                          {user ? "Go to Dashboard" : "Get Started Now"}
+                        </Button>
+                      </motion.div>
+                    </Link>
+                  )}
                 </motion.div>
                 
                 <motion.div
