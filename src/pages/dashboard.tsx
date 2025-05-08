@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { RefreshCw, Settings, LogOut } from "lucide-react";
+import { RefreshCw, LogOut } from "lucide-react";
 import Head from "next/head";
 import TrafficMap from "@/components/TrafficMap";
 import CitySelector from "@/components/CitySelector";
@@ -119,10 +119,6 @@ export default function Dashboard() {
                 >
                   <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
                   Refresh
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
                 </Button>
                 <Button 
                   variant="outline" 

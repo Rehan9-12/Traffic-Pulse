@@ -4,14 +4,12 @@ import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/AuthContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import GoogleButton from '@/components/GoogleButton';
 import Logo from '@/components/Logo';
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -77,25 +75,6 @@ const SignUpPage = () => {
           <CardContent>
             <form onSubmit={handleSignUp}>
               <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-4">
-                  <GoogleButton />
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      router.push('/magic-link-login');
-                    }}
-                    variant="outline"
-                  >
-                    Continue with Magic Link
-                  </Button>
-                </div>
-
-                <div className="flex items-center w-full">
-                  <Separator className="flex-1" />
-                  <span className="mx-4 text-muted-foreground text-sm font-semibold whitespace-nowrap">or</span>
-                  <Separator className="flex-1" />
-                </div>
-
                 <div className="flex flex-col gap-6">
                   <p className="text-center text-sm text-muted-foreground">Enter your details</p>
                   <div className="flex flex-col gap-4">
