@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon, AlertTriangle, Car, MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface TrafficStatsProps {
   city: string;
 }
 
 const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
+  // Animation state for counters
+  const [countProgress, setCountProgress] = useState({
+    congestion: 0,
+    speed: 0,
+    incidents: 0
+  });
+
   // Mock data for traffic statistics for Indian cities
   const stats = {
     'delhi': {
@@ -87,82 +95,218 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
 
   // Get congestion level color
   const getCongestionColor = (level: number) => {
-    if (level >= 80) return 'bg-red-500';
-    if (level >= 60) return 'bg-yellow-500';
-    if (level >= 40) return 'bg-orange-400';
-    return 'bg-green-500';
+    if (level >= 80) return 'from-red-500 to-red-600';
+    if (level >= 60) return 'from-yellow-400 to-yellow-500';
+    if (level >= 40) return 'from-orange-400 to-orange-500';
+    return 'from-green-400 to-green-500';
+  };
+
+  // Animate counters when city changes
+  useEffect(() => {
+    setCountProgress({
+      congestion: 0,
+      speed: 0,
+      incidents: 0
+    });
+    
+    const timer = setTimeout(() => {
+      setCountProgress({
+        congestion: cityStats.congestionLevel,
+        speed: cityStats.avgSpeed,
+        incidents: cityStats.incidentCount
+      });
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [city, cityStats]);
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.4 }
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Congestion Level</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-baseline justify-between">
-            <div className="text-2xl font-bold">{cityStats.congestionLevel}%</div>
-            <div className={`flex items-center text-xs ${cityStats.congestionChange > 0 ? 'text-red-500' : 'text-green-500'}`}>
-              {cityStats.congestionChange > 0 ? (
-                <ArrowUpIcon className="h-3 w-3 mr-1" />
-              ) : (
-                <ArrowDownIcon className="h-3 w-3 mr-1" />
-              )}
-              {Math.abs(cityStats.congestionChange)}%
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-700 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <CardHeader className="pb-2 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700/50">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <MapPin className="h-4 w-4 mr-2 text-red-500" />
+              Congestion Level
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="flex items-baseline justify-between">
+              <motion.div 
+                className="text-3xl font-bold"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <motion.span
+                  animate={{ count: countProgress.congestion }}
+                  transition={{ duration: 1, delay: 0.3 }}
+                >
+                  {Math.round(countProgress.congestion)}
+                </motion.span>%
+              </motion.div>
+              <motion.div 
+                className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${cityStats.congestionChange > 0 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                {cityStats.congestionChange > 0 ? (
+                  <ArrowUpIcon className="h-3 w-3 mr-1" />
+                ) : (
+                  <ArrowDownIcon className="h-3 w-3 mr-1" />
+                )}
+                {Math.abs(cityStats.congestionChange)}%
+              </motion.div>
             </div>
-          </div>
-          <Progress 
-            value={cityStats.congestionLevel} 
-            className={`h-2 mt-2 ${getCongestionColor(cityStats.congestionLevel)}`} 
-          />
-          <p className="text-xs text-muted-foreground mt-2">
-            Current traffic density compared to normal conditions
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Average Speed</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-baseline justify-between">
-            <div className="text-2xl font-bold">{cityStats.avgSpeed} km/h</div>
-            <div className={`flex items-center text-xs ${cityStats.speedChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
-              {cityStats.speedChange > 0 ? (
-                <ArrowUpIcon className="h-3 w-3 mr-1" />
-              ) : (
-                <ArrowDownIcon className="h-3 w-3 mr-1" />
-              )}
-              {Math.abs(cityStats.speedChange)} km/h
+            <div className="h-2 mt-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <motion.div 
+                className={`h-full bg-gradient-to-r ${getCongestionColor(cityStats.congestionLevel)} rounded-full`}
+                initial={{ width: 0 }}
+                animate={{ width: `${cityStats.congestionLevel}%` }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
             </div>
-          </div>
-          <Progress 
-            value={(cityStats.avgSpeed / 40) * 100} 
-            className="h-2 mt-2 bg-blue-500" 
-          />
-          <p className="text-xs text-muted-foreground mt-2">
-            Average vehicle speed across major roads
-          </p>
-        </CardContent>
-      </Card>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+              Current traffic density compared to normal conditions
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Active Incidents</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{cityStats.incidentCount}</div>
-          <div className="grid grid-cols-3 gap-1 mt-2">
-            <div className="h-2 bg-red-500 rounded"></div>
-            <div className="h-2 bg-yellow-500 rounded"></div>
-            <div className="h-2 bg-green-500 rounded"></div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Total number of active traffic incidents
-          </p>
-        </CardContent>
-      </Card>
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.2 }}
+      >
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-700 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <CardHeader className="pb-2 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700/50">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Car className="h-4 w-4 mr-2 text-blue-500" />
+              Average Speed
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="flex items-baseline justify-between">
+              <motion.div 
+                className="text-3xl font-bold"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <motion.span
+                  animate={{ count: countProgress.speed }}
+                  transition={{ duration: 1, delay: 0.3 }}
+                >
+                  {Math.round(countProgress.speed)}
+                </motion.span> km/h
+              </motion.div>
+              <motion.div 
+                className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${cityStats.speedChange < 0 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                {cityStats.speedChange > 0 ? (
+                  <ArrowUpIcon className="h-3 w-3 mr-1" />
+                ) : (
+                  <ArrowDownIcon className="h-3 w-3 mr-1" />
+                )}
+                {Math.abs(cityStats.speedChange)} km/h
+              </motion.div>
+            </div>
+            <div className="h-2 mt-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${(cityStats.avgSpeed / 40) * 100}%` }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+              Average vehicle speed across major roads
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.3 }}
+      >
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-700 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <CardHeader className="pb-2 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700/50">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
+              Active Incidents
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <motion.div 
+              className="text-3xl font-bold"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <motion.span
+                animate={{ count: countProgress.incidents }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                {Math.round(countProgress.incidents)}
+              </motion.span>
+            </motion.div>
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              <motion.div 
+                className="h-2 bg-gradient-to-r from-red-400 to-red-500 rounded-full"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                style={{ transformOrigin: "left" }}
+              />
+              <motion.div 
+                className="h-2 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                style={{ transformOrigin: "left" }}
+              />
+              <motion.div 
+                className="h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                style={{ transformOrigin: "left" }}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-2 mt-1">
+              <div className="text-[10px] text-center text-slate-500 dark:text-slate-400">Critical</div>
+              <div className="text-[10px] text-center text-slate-500 dark:text-slate-400">Major</div>
+              <div className="text-[10px] text-center text-slate-500 dark:text-slate-400">Minor</div>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+              Total number of active traffic incidents
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };
