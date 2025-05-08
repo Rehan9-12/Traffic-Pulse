@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@tomtom-international/web-sdk-maps/dist/maps.css';
+import TrafficLegend from './TrafficLegend';
+import { Button } from '@/components/ui/button';
+import { Info } from 'lucide-react';
 
 interface TrafficMapProps {
   apiKey: string;
@@ -19,6 +22,7 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showLegend, setShowLegend] = useState(true);
 
   useEffect(() => {
     // Dynamic import of TomTom SDK to avoid SSR issues
@@ -42,25 +46,47 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
           
           // Add traffic flow visualization when map is loaded
           map.on('load', () => {
-            // Use the correct method to add traffic layers
-            // The exact implementation depends on TomTom SDK version
             try {
-              // For newer versions of TomTom SDK
+              // Add traffic flow layer with enhanced visibility
               if (ttMaps.services && ttMaps.services.traffic) {
+                // Add traffic flow layer (colored roads based on traffic conditions)
                 const trafficFlow = new ttMaps.services.traffic.TrafficFlow({
-                  key: apiKey
+                  key: apiKey,
+                  style: 'relative', // 'relative' shows traffic relative to free-flow conditions
+                  refresh: 60, // refresh every 60 seconds
                 });
                 map.addLayer(trafficFlow);
+                
+                // Add traffic incidents layer (accident markers, etc.)
+                const trafficIncidents = new ttMaps.services.traffic.TrafficIncidents({
+                  key: apiKey,
+                  refresh: 60,
+                });
+                map.addLayer(trafficIncidents);
               }
               // Fallback for different API versions
               else if (ttServices && ttServices.traffic) {
-                const trafficLayer = new ttServices.traffic.TrafficFlowLayer({
-                  key: apiKey
+                // Add traffic flow layer
+                const trafficFlowLayer = new ttServices.traffic.TrafficFlowLayer({
+                  key: apiKey,
+                  refresh: 60,
                 });
-                map.addLayer(trafficLayer);
+                map.addLayer(trafficFlowLayer);
+                
+                // Add traffic incidents layer
+                const trafficIncidentsLayer = new ttServices.traffic.TrafficIncidentsLayer({
+                  key: apiKey,
+                  refresh: 60,
+                });
+                map.addLayer(trafficIncidentsLayer);
               }
+              
+              // Add custom controls for toggling traffic layers
+              map.addControl(new ttMaps.TrafficControl());
+              map.addControl(new ttMaps.FullscreenControl());
+              
             } catch (e) {
-              console.warn("Could not add traffic layer:", e);
+              console.warn("Could not add traffic layers:", e);
               // Fallback to basic map without traffic layers
             }
             
@@ -94,12 +120,24 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
   }, [center, zoom, mapInstance, isLoaded]);
 
   return (
-    <div 
-      ref={mapRef} 
-      style={style} 
-      className={`traffic-map ${className}`}
-      data-testid="traffic-map"
-    />
+    <div className="relative">
+      <div 
+        ref={mapRef} 
+        style={style} 
+        className={`traffic-map ${className}`}
+        data-testid="traffic-map"
+      />
+      {showLegend && <TrafficLegend />}
+      <Button 
+        size="sm" 
+        variant="secondary" 
+        className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg"
+        onClick={() => setShowLegend(!showLegend)}
+      >
+        <Info className="h-4 w-4 mr-1" />
+        {showLegend ? 'Hide Legend' : 'Show Legend'}
+      </Button>
+    </div>
   );
 };
 

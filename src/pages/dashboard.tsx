@@ -11,6 +11,7 @@ import CitySelector from "@/components/CitySelector";
 import TrafficFilters from "@/components/TrafficFilters";
 import TrafficIncidents from "@/components/TrafficIncidents";
 import TrafficStats from "@/components/TrafficStats";
+import TrafficConditionsSummary from "@/components/TrafficConditionsSummary";
 
 export default function Dashboard() {
   const { signOut, user } = useAuth();
@@ -145,10 +146,26 @@ export default function Dashboard() {
             {/* Map and incidents */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
               <Card className="lg:col-span-2">
-                <CardHeader>
+                <CardHeader className="pb-2">
                   <CardTitle>Traffic Map</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
+                <CardContent className="p-4">
+                  {/* Traffic conditions summary */}
+                  <TrafficConditionsSummary 
+                    city={selectedCity} 
+                    congestionLevel={
+                      selectedCity === 'delhi' ? 85 :
+                      selectedCity === 'mumbai' ? 90 :
+                      selectedCity === 'bengaluru' ? 82 :
+                      selectedCity === 'chennai' ? 75 :
+                      selectedCity === 'kolkata' ? 80 :
+                      selectedCity === 'hyderabad' ? 72 :
+                      selectedCity === 'pune' ? 68 :
+                      selectedCity === 'ahmedabad' ? 65 :
+                      selectedCity === 'lucknow' ? 60 :
+                      selectedCity === 'jaipur' ? 62 : 75
+                    }
+                  />
                   <div className="h-[500px] w-full">
                     <TrafficMap 
                       apiKey={process.env.NEXT_PUBLIC_TOMTOM_API_KEY || tomtomApiKey}
