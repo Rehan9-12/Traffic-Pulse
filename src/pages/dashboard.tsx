@@ -26,6 +26,11 @@ export default function Dashboard() {
 
   // TomTom API key from environment variables
   const tomtomApiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY || "";
+  
+  // Log API key availability (not the actual key for security)
+  useEffect(() => {
+    console.log("TomTom API key available:", !!tomtomApiKey);
+  }, [tomtomApiKey]);
 
   // Handle city change
   const handleCityChange = (city: string, coordinates: [number, number]) => {
@@ -228,12 +233,18 @@ export default function Dashboard() {
                   <CardTitle>Traffic Map</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
-                  <div className="h-[500px] w-full">
-                    <TrafficMap 
-                      apiKey={process.env.NEXT_PUBLIC_TOMTOM_API_KEY || tomtomApiKey}
-                      center={mapCenter}
-                      zoom={12}
-                    />
+                  <div className="h-[500px] w-full relative">
+                    {!tomtomApiKey ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                        <p className="text-muted-foreground">TomTom API key not found. Please check your environment variables.</p>
+                      </div>
+                    ) : (
+                      <TrafficMap 
+                        apiKey={tomtomApiKey}
+                        center={mapCenter}
+                        zoom={12}
+                      />
+                    )}
                   </div>
                 </CardContent>
               </Card>
