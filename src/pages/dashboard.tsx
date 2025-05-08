@@ -12,6 +12,8 @@ import TrafficFilters from "@/components/TrafficFilters";
 import TrafficIncidents from "@/components/TrafficIncidents";
 import TrafficStats from "@/components/TrafficStats";
 import TrafficConditionsSummary from "@/components/TrafficConditionsSummary";
+import TrafficLegend from "@/components/TrafficLegend";
+import { Info } from "lucide-react";
 
 export default function Dashboard() {
   const { signOut, user } = useAuth();
@@ -20,6 +22,7 @@ export default function Dashboard() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [showLegend, setShowLegend] = useState(true);
 
   // TomTom API key from environment variables
   const tomtomApiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY || "";
@@ -104,6 +107,23 @@ export default function Dashboard() {
                   selectedCity === 'jaipur' ? 62 : 75
                 }
               />
+              
+              {/* Traffic Legend */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-medium">Traffic Signs</h2>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 px-2 text-xs"
+                    onClick={() => setShowLegend(!showLegend)}
+                  >
+                    <Info className="h-3 w-3 mr-1" />
+                    {showLegend ? 'Hide Legend' : 'Show Legend'}
+                  </Button>
+                </div>
+                {showLegend && <TrafficLegend className="mt-2" />}
+              </div>
             </div>
 
             <Separator />
@@ -179,6 +199,23 @@ export default function Dashboard() {
                   selectedCity === 'jaipur' ? 62 : 75
                 }
               />
+              
+              {/* Mobile Traffic Legend */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-medium">Traffic Signs</h2>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 px-2 text-xs"
+                    onClick={() => setShowLegend(!showLegend)}
+                  >
+                    <Info className="h-3 w-3 mr-1" />
+                    {showLegend ? 'Hide Legend' : 'Show Legend'}
+                  </Button>
+                </div>
+                {showLegend && <TrafficLegend className="mt-2" />}
+              </div>
             </div>
 
             {/* Stats cards */}

@@ -3,11 +3,12 @@ import { Card, CardContent } from '@/components/ui/card';
 
 interface TrafficLegendProps {
   className?: string;
+  isInMap?: boolean;
 }
 
-const TrafficLegend: React.FC<TrafficLegendProps> = ({ className = '' }) => {
+const TrafficLegend: React.FC<TrafficLegendProps> = ({ className = '', isInMap = false }) => {
   return (
-    <Card className={`absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg ${className}`}>
+    <Card className={`${isInMap ? 'absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm' : ''} shadow-lg ${className}`}>
       <CardContent className="p-3">
         <h3 className="text-sm font-medium mb-2">Traffic Conditions</h3>
         <div className="space-y-2">

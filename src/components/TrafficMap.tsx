@@ -9,9 +9,7 @@ declare global {
     tt: any;
   }
 }
-import TrafficLegend from './TrafficLegend';
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react';
 
 interface TrafficMapProps {
   apiKey: string;
@@ -31,7 +29,7 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [showLegend, setShowLegend] = useState(true);
+  // Legend is now handled in the dashboard
 
   // Function to initialize the map
   const initializeMap = () => {
@@ -128,16 +126,6 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
         className={`traffic-map ${className}`}
         data-testid="traffic-map"
       />
-      {showLegend && <TrafficLegend />}
-      <Button 
-        size="sm" 
-        variant="secondary" 
-        className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg"
-        onClick={() => setShowLegend(!showLegend)}
-      >
-        <Info className="h-4 w-4 mr-1" />
-        {showLegend ? 'Hide Legend' : 'Show Legend'}
-      </Button>
     </div>
   );
 };
