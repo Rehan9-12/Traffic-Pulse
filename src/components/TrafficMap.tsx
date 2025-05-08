@@ -16,6 +16,11 @@ interface TrafficMapProps {
   zoom?: number;
   style?: React.CSSProperties;
   className?: string;
+  route?: {
+    origin: [number, number];
+    destination: [number, number];
+    points: [number, number][];
+  };
 }
 
 const TrafficMap: React.FC<TrafficMapProps> = ({
@@ -24,7 +29,12 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
   zoom = 13,
   style = { width: '100%', height: '100%' },
   className = '',
+  route,
 }) => {
+  // References for markers and route layer
+  const originMarkerRef = useRef<any>(null);
+  const destinationMarkerRef = useRef<any>(null);
+  const routeLayerRef = useRef<any>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -127,13 +137,131 @@ const TrafficMap: React.FC<TrafficMapProps> = ({
     };
   }, [mapInstance]);
 
-  // Update map center if props change
+  // Update map center if props change (only if no route is displayed)
   useEffect(() => {
-    if (mapInstance && isLoaded) {
+    if (mapInstance && isLoaded && !route) {
       mapInstance.setCenter(center);
       mapInstance.setZoom(zoom);
     }
-  }, [center, zoom, mapInstance, isLoaded]);
+  }, [center, zoom, mapInstance, isLoaded, route]);
+
+  // Display route on map when route changes
+  useEffect(() => {
+    if (!mapInstance || !isLoaded || !route || !window.tt) return;
+    
+    console.log("Displaying route on map:", route);
+    
+    // Clear previous route and markers
+    if (routeLayerRef.current) {
+      mapInstance.removeLayer(routeLayerRef.current.id);
+      routeLayerRef.current = null;
+    }
+    
+    if (originMarkerRef.current) {
+      originMarkerRef.current.remove();
+      originMarkerRef.current = null;
+    }
+    
+    if (destinationMarkerRef.current) {
+      destinationMarkerRef.current.remove();
+      destinationMarkerRef.current = null;
+    }
+    
+    try {
+      // Create origin marker (green)
+      const originElement = document.createElement('div');
+      originElement.className = 'origin-marker';
+      originElement.style.width = '24px';
+      originElement.style.height = '24px';
+      originElement.style.borderRadius = '50%';
+      originElement.style.backgroundColor = '#4CAF50';
+      originElement.style.border = '2px solid white';
+      originElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      
+      originMarkerRef.current = new window.tt.Marker({
+        element: originElement,
+        anchor: 'bottom'
+      })
+        .setLngLat(route.origin)
+        .addTo(mapInstance);
+      
+      // Create destination marker (red)
+      const destElement = document.createElement('div');
+      destElement.className = 'destination-marker';
+      destElement.style.width = '24px';
+      destElement.style.height = '24px';
+      destElement.style.borderRadius = '50%';
+      destElement.style.backgroundColor = '#F44336';
+      destElement.style.border = '2px solid white';
+      destElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      
+      destinationMarkerRef.current = new window.tt.Marker({
+        element: destElement,
+        anchor: 'bottom'
+      })
+        .setLngLat(route.destination)
+        .addTo(mapInstance);
+      
+      // Add route line to map
+      const routeLineData = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: route.points
+        }
+      };
+      
+      // Add the route as a layer if it doesn't exist yet
+      if (!mapInstance.getSource('route')) {
+        mapInstance.addSource('route', {
+          type: 'geojson',
+          data: routeLineData
+        });
+        
+        mapInstance.addLayer({
+          id: 'route',
+          type: 'line',
+          source: 'route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#4a89f3',
+            'line-width': 6,
+            'line-opacity': 0.8
+          }
+        });
+        
+        routeLayerRef.current = { id: 'route' };
+      } else {
+        // Update existing route
+        mapInstance.getSource('route').setData(routeLineData);
+      }
+      
+      // Fit map to show the entire route with padding
+      const bounds = new window.tt.LngLatBounds();
+      
+      // Include origin and destination in bounds
+      bounds.extend(route.origin);
+      bounds.extend(route.destination);
+      
+      // Include all route points in bounds
+      route.points.forEach(point => {
+        bounds.extend(point);
+      });
+      
+      // Fit the map to the route bounds with padding
+      mapInstance.fitBounds(bounds, {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxZoom: 16
+      });
+      
+      console.log("Route displayed successfully");
+    } catch (error) {
+      console.error("Error displaying route:", error);
+    }
+  }, [route, mapInstance, isLoaded]);
 
   // Add CSS to ensure map container is properly sized
   useEffect(() => {
