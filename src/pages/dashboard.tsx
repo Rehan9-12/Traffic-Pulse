@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import { RefreshCw, LogOut } from "lucide-react";
 import Head from "next/head";
 import TrafficMap from "@/components/TrafficMap";
-=======
 import CitySelector from "@/components/CitySelector";
 import TrafficFilters from "@/components/TrafficFilters";
 import TrafficIncidents from "@/components/TrafficIncidents";
@@ -223,8 +222,6 @@ export default function Dashboard() {
                 {showLegend && <TrafficLegend className="mt-2" />}
               </div>
             </div>
-            
-
 
             {/* Stats cards */}
             <TrafficStats city={selectedCity} />
@@ -261,8 +258,6 @@ export default function Dashboard() {
                   />
                 </div>
                 
-
-
                 <TrafficIncidents selectedFilters={selectedFilters} />
               </div>
             </div>
