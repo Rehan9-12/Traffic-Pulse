@@ -129,25 +129,7 @@ export default function Home() {
               </motion.div>
             </motion.div>
             
-            {/* Scroll indicator */}
-            <motion.div 
-              className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5, duration: 0.5 }}
-            >
-              <motion.div
-                className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
-                animate={{ boxShadow: ["0 0 0 rgba(255,255,255,0)", "0 0 10px rgba(255,255,255,0.3)", "0 0 0 rgba(255,255,255,0)"] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <motion.div 
-                  className="w-1 h-2 bg-white/50 rounded-full mt-2"
-                  animate={{ y: [0, 12, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
-                />
-              </motion.div>
-            </motion.div>
+            {/* Scroll indicator removed */}
           </section>
 
           {/* Features Section */}

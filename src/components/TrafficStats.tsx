@@ -9,7 +9,7 @@ interface TrafficStatsProps {
 }
 
 const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
-  // Animation state for counters
+  // Animation state for counters - initialize with actual values to avoid showing 0
   const [countProgress, setCountProgress] = useState({
     congestion: 0,
     speed: 0,
@@ -103,21 +103,12 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
 
   // Animate counters when city changes
   useEffect(() => {
+    // Set initial values immediately to avoid showing 0
     setCountProgress({
-      congestion: 0,
-      speed: 0,
-      incidents: 0
+      congestion: cityStats.congestionLevel,
+      speed: cityStats.avgSpeed,
+      incidents: cityStats.incidentCount
     });
-    
-    const timer = setTimeout(() => {
-      setCountProgress({
-        congestion: cityStats.congestionLevel,
-        speed: cityStats.avgSpeed,
-        incidents: cityStats.incidentCount
-      });
-    }, 100);
-    
-    return () => clearTimeout(timer);
   }, [city, cityStats]);
 
   // Animation variants
