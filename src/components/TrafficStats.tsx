@@ -153,12 +153,7 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.span
-                  animate={{ count: countProgress.congestion }}
-                  transition={{ duration: 1, delay: 0.3 }}
-                >
-                  {Math.round(countProgress.congestion)}
-                </motion.span>%
+                {Math.round(countProgress.congestion)}%
               </motion.div>
               <motion.div 
                 className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${cityStats.congestionChange > 0 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}
@@ -210,12 +205,7 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.span
-                  animate={{ count: countProgress.speed }}
-                  transition={{ duration: 1, delay: 0.3 }}
-                >
-                  {Math.round(countProgress.speed)}
-                </motion.span> km/h
+                {Math.round(countProgress.speed)} km/h
               </motion.div>
               <motion.div 
                 className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${cityStats.speedChange < 0 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}
@@ -266,12 +256,7 @@ const TrafficStats: React.FC<TrafficStatsProps> = ({ city }) => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <motion.span
-                animate={{ count: countProgress.incidents }}
-                transition={{ duration: 1, delay: 0.3 }}
-              >
-                {Math.round(countProgress.incidents)}
-              </motion.span>
+              {Math.round(countProgress.incidents)}
             </motion.div>
             <div className="grid grid-cols-3 gap-2 mt-4">
               <motion.div 
