@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { RefreshCw, LogOut } from "lucide-react";
 import Head from "next/head";
 import TrafficMap from "@/components/TrafficMap";
-import NavigationPanel from "@/components/NavigationPanel";
+=======
 import CitySelector from "@/components/CitySelector";
 import TrafficFilters from "@/components/TrafficFilters";
 import TrafficIncidents from "@/components/TrafficIncidents";
@@ -24,20 +24,6 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [showLegend, setShowLegend] = useState(true);
-  
-  // Navigation state
-  const [currentRoute, setCurrentRoute] = useState<{
-    origin: [number, number];
-    destination: [number, number];
-    points: [number, number][];
-    summary: {
-      lengthInMeters: number;
-      travelTimeInSeconds: number;
-      trafficDelayInSeconds: number;
-      departureTime: string;
-      arrivalTime: string;
-    };
-  } | null>(null);
 
   // TomTom API key from environment variables
   const tomtomApiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY || "";
@@ -238,16 +224,7 @@ export default function Dashboard() {
               </div>
             </div>
             
-            {/* Mobile Navigation Panel */}
-            <div className="block md:hidden mb-4">
-              <NavigationPanel 
-                apiKey={tomtomApiKey}
-                onRouteCalculated={(route) => {
-                  console.log("Route calculated:", route);
-                  setCurrentRoute(route);
-                }}
-              />
-            </div>
+
 
             {/* Stats cards */}
             <TrafficStats city={selectedCity} />
@@ -269,11 +246,6 @@ export default function Dashboard() {
                         apiKey={tomtomApiKey}
                         center={mapCenter}
                         zoom={12}
-                        route={currentRoute ? {
-                          origin: currentRoute.origin,
-                          destination: currentRoute.destination,
-                          points: currentRoute.points
-                        } : undefined}
                       />
                     )}
                   </div>
@@ -289,14 +261,7 @@ export default function Dashboard() {
                   />
                 </div>
                 
-                {/* Navigation Panel */}
-                <NavigationPanel 
-                  apiKey={tomtomApiKey}
-                  onRouteCalculated={(route) => {
-                    console.log("Route calculated:", route);
-                    setCurrentRoute(route);
-                  }}
-                />
+
 
                 <TrafficIncidents selectedFilters={selectedFilters} />
               </div>
