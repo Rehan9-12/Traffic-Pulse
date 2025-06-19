@@ -1,6 +1,4 @@
-# Codev Template
-
-This is a Codev template project that includes:
+This project includes:
 
 1. Next.js with Pages Router
 2. Tailwind CSS Framework
