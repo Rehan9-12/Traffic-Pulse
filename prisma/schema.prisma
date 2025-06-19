@@ -5,8 +5,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url       = "postgresql://co_dev_qcsmauytj2di50m4.lkictinunbfkemkkalun:CAnm48Lpcoc6TxE8XTz3pqgfS9Uxd23o@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+  directUrl = "postgresql://co_dev_qcsmauytj2di50m4.lkictinunbfkemkkalun:CAnm48Lpcoc6TxE8XTz3pqgfS9Uxd23o@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 }
 model User {
   id         String   @id @db.Uuid
